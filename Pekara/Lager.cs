@@ -40,6 +40,7 @@ namespace Pekara
         {
             button1.Enabled = true;
 
+
         }
 
         private void button1_Click(object sender, EventArgs e)
