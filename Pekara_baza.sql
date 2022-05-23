@@ -11,9 +11,12 @@ lozinka nvarchar(100) not null
 create table lokacija
 (id_lokacija int identity(1,1) primary key,
 adresa nvarchar(100),
-radno_vreme_pocetak datetime,
-radno_vreme_kraj datetime
+radno_vreme_pocetak time,
+radno_vreme_kraj time
 )
+insert into lokacija
+values ('Cara Dusana 51','08:00','19:00'),
+('Bulevar JNA','08:00','19:00')
 
 create table radnik
 (id_radnik int identity(1,1) primary key,
@@ -23,6 +26,9 @@ JMBG int,
 id_lokacije int,
 tekuci_racun nvarchar(100)
 )
+insert into radnik
+values ('Mika','Peric',14020013,1,''),
+('Milena','Nikolic',13080046,2,'')
 
 create table proizvod
 (id_proizvoda int identity(1,1) primary key,
@@ -31,12 +37,22 @@ tip nvarchar(100),
 cena int,
 kalorije int
 )
+insert into proizvod
+values ('Kroasan', 'Pecivo', 100, 80),
+('Krofna', 'Pecivo', 60, 100),
+('Hleb', 'Pecivo', 39, 70),
+('Jogurt', 'Pice', 60, 100),
+('Cokoladno Mleko', 'Pice', 65, 85),
+('Puding', 'Dezert', 40, 115)
 
 create table proizvodjac
 (id_proizvodjac int identity(1,1) primary key,
 ime nvarchar(100),
 PIB int
 )
+insert into proizvodjac
+values ('Klas', 39537502),
+('Imlek', 6351202);
 
 create table lager
 (id_lager int identity(1,1) primary key,
@@ -44,8 +60,11 @@ id_proizvoda int ,
 id_lokacija int ,
 kolicina int
 )
+insert into lager
+values (1,1,30),(2,1,80),(3,1,100),(4,1,15),(5,1,200),(6,1,109),
+(1,2,80),(2,2,14),(3,2,200),(4,2,70),(5,2,157),(6,2,314)
 
-create table kupac
+create table kupac   --posle ovog nisam ubacivao podatke jer ne koristim ove tabele, plan je bio da ih iskoristim ali nazalost nemam vremena
 ( id_kupac int identity(1,1) primary key,
   tip_kupovine nvarchar(100),
   datum_dostave datetime
@@ -69,8 +88,7 @@ create table uvoz
 	id_proizvodjac int,
 	id_proizvod int,
 	id_lager int,
-	kolicina int,
-	
+	kolicina int,	
 	cena_uvoza int
 )
 
