@@ -7,6 +7,8 @@ id_korisnik int identity(1,1) primary key,
 email nvarchar(100) not null,
 lozinka nvarchar(100) not null
 )
+insert into korisnik
+values ('test@test','1234'), ('MikeOx@gmail.com','pass')
 
 create table lokacija
 (id_lokacija int identity(1,1) primary key,
@@ -220,6 +222,124 @@ BEGIN TRY
 	Values(@ime,@cena)
 		RETURN 0;
 END TRY
+BEGIN CATCH
+	RETURN @@ERROR;
+END CATCH
+
+Create PROC Proizvod_Update
+@ime nvarchar(100),
+@tip nvarchar(100),
+@cena int,
+@kalorije int
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+	IF EXISTS (SELECT *  FROM dbo.proizvod
+	WHERE ime = @ime  )
+
+	BEGIN
+	
+	Update Proizvod  Set  tip=@tip, cena=@cena, kalorije=@kalorije  where ime=@ime
+		RETURN 0;
+	END
+	RETURN -1;
+END TRY
+BEGIN CATCH
+	RETURN @@ERROR;
+END CATCH
+GO
+
+Create PROC Proizvodjac_insert
+@ime nvarchar(50),
+@PIB int
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+	IF EXISTS (SELECT TOP 1 ime  FROM proizvodjac
+	WHERE ime = @ime  )
+	Return 1
+	else
+	Insert Into proizvodjac(ime,PIB)
+	Values(@ime,@PIB)
+		RETURN 0;
+END TRY
+BEGIN CATCH
+	RETURN @@ERROR;
+END CATCH
+
+Create PROC Proizvodjac_Update
+@id int,
+@ime nvarchar(100),
+@PIB int
+AS
+SET LOCK_TIMEOUT 3000;
+BEGIN TRY
+	IF EXISTS (SELECT *  FROM dbo.proizvodjac
+	WHERE id_proizvodjac = @id  )
+
+	BEGIN
+	
+	Update Proizvodjac  Set  ime=@ime, PIB=@PIB  where id_proizvodjac=@id
+		RETURN 0;
+	END
+	RETURN -1;
+END TRY
+BEGIN CATCH
+	RETURN @@ERROR;
+END CATCH
+GO
+Create PROC Kupovina
+@id_proizvoda int, 
+@kolicina int,
+@id_lokacija int
+as
+set lock_timeout 3000;
+begin try
+IF EXISTS (SELECT *  FROM dbo.lager
+	WHERE id_proizvoda = @id_proizvoda and id_lokacija=@id_lokacija  )
+	begin
+	update lager set kolicina=kolicina-@kolicina where id_lokacija=@id_lokacija and id_proizvoda=@id_proizvoda 
+	return 0
+	end
+	return -1
+end try
+BEGIN CATCH
+	RETURN @@ERROR;
+END CATCH
+
+Create PROC Uvoz_kolicina
+@id_proizvoda int, 
+@kolicina int,
+@id_lokacija int
+as
+set lock_timeout 3000;
+begin try
+IF EXISTS (SELECT *  FROM dbo.lager
+	WHERE id_proizvoda = @id_proizvoda and id_lokacija=@id_lokacija  )
+	begin
+	update lager set kolicina=kolicina+@kolicina where id_lokacija=@id_lokacija and id_proizvoda=@id_proizvoda 
+	return 0
+	end
+	return -1
+end try
+BEGIN CATCH
+	RETURN @@ERROR;
+END CATCH
+
+Create PROC Promena_radnog_mesta
+@id_radnik int, 
+@id_lokacija int
+as
+set lock_timeout 3000;
+begin try
+IF EXISTS (SELECT *  FROM dbo.radnik
+	WHERE id_radnik = @id_radnik  )
+	begin
+	update radnik set id_lokacije=@id_lokacija where id_radnik=@id_radnik
+	return 0
+	end
+	return -1
+end try
 BEGIN CATCH
 	RETURN @@ERROR;
 END CATCH
